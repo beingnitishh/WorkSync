@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 
 // DELETE /api/holidays/[date] - Remove a holiday by date
 export async function DELETE(
@@ -7,6 +7,7 @@ export async function DELETE(
   { params }: { params: Promise<{ date: string }> }
 ) {
   try {
+    await ensureDatabase();
     const { date } = await params;
 
     const existing = await db.holiday.findUnique({

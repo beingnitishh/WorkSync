@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   FirstSundayPattern,
   AttendanceStatus,
@@ -13,6 +13,7 @@ import {
 // GET /api/attendance?from=YYYY-MM-DD&to=YYYY-MM-DD&employeeId=xxx
 export async function GET(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const from = searchParams.get("from");
     const to = searchParams.get("to");
@@ -61,6 +62,7 @@ export async function GET(request: NextRequest) {
 // POST /api/attendance - Generate attendance for a date range
 export async function POST(request: NextRequest) {
   try {
+    await ensureDatabase();
     const body = await request.json();
     const { employeeId, from, to } = body;
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   FirstSundayPattern,
   SalaryCalculationMethod,
@@ -11,6 +11,7 @@ import {
 // GET /api/export?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD&format=csv|pdf
 export async function GET(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const fromDateStr = searchParams.get("fromDate");
     const toDateStr = searchParams.get("toDate");

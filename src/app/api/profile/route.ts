@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   FirstSundayPattern,
   SalaryCalculationMethod,
@@ -9,6 +9,7 @@ import {
 // GET /api/profile - Get the employee profile (there should only be one)
 export async function GET() {
   try {
+    await ensureDatabase();
     const employee = await db.employee.findFirst({
       include: { attendance: false },
     });
@@ -33,6 +34,7 @@ export async function GET() {
 // POST /api/profile - Create employee profile with validation
 export async function POST(request: NextRequest) {
   try {
+    await ensureDatabase();
     const body = await request.json();
     const { name, startDate, monthlySalary, firstSundayPattern, salaryCalculationMethod } = body;
 
@@ -119,6 +121,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/profile - Update employee profile
 export async function PUT(request: NextRequest) {
   try {
+    await ensureDatabase();
     const body = await request.json();
     const { name, startDate, monthlySalary, firstSundayPattern, salaryCalculationMethod } = body;
 
@@ -196,6 +199,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/profile - Delete employee profile and all associated data
 export async function DELETE() {
   try {
+    await ensureDatabase();
     const existing = await db.employee.findFirst();
     if (!existing) {
       return NextResponse.json(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   AttendanceStatus,
   FirstSundayPattern,
@@ -43,6 +43,7 @@ function getAutoStatusForSunday(
 // GET /api/sunday?month=1&year=2025&employeeId=xxx&generateFuture=true
 export async function GET(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const monthStr = searchParams.get("month");
     const yearStr = searchParams.get("year");
@@ -188,6 +189,7 @@ export async function GET(request: NextRequest) {
 // POST /api/sunday - Override a Sunday's attendance
 export async function POST(request: NextRequest) {
   try {
+    await ensureDatabase();
     const body = await request.json();
     const { employeeId, date, status } = body;
 
@@ -289,6 +291,7 @@ export async function POST(request: NextRequest) {
 // Reset all Sunday manual overrides for a given month
 export async function DELETE(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const employeeId = searchParams.get("employeeId");
     const monthStr = searchParams.get("month");

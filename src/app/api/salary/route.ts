@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   FirstSundayPattern,
   SalaryCalculationMethod,
@@ -14,6 +14,7 @@ import {
 // GET /api/salary?month=1&year=2025
 export async function GET(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const fromDateStr = searchParams.get("fromDate");
     const toDateStr = searchParams.get("toDate");

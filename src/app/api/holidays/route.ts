@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 
 // GET /api/holidays?year=2026 - List all holidays, optionally filter by year
 export async function GET(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const year = searchParams.get("year");
 
@@ -50,6 +51,7 @@ export async function GET(request: NextRequest) {
 // POST /api/holidays - Add a new holiday
 export async function POST(request: NextRequest) {
   try {
+    await ensureDatabase();
     const body = await request.json();
     const { date, name, recurring } = body;
 

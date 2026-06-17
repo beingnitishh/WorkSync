@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   AttendanceStatus,
   getPayableValue,
@@ -12,6 +12,7 @@ import {
 // GET /api/attendance/stats?month=1&year=2025&employeeId=xxx
 export async function GET(request: NextRequest) {
   try {
+    await ensureDatabase();
     const { searchParams } = new URL(request.url);
     const monthStr = searchParams.get("month");
     const yearStr = searchParams.get("year");

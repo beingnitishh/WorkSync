@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDatabase } from "@/lib/db";
 import {
   AttendanceStatus,
   getPayableValue,
@@ -14,6 +14,7 @@ export async function GET(
   { params }: { params: Promise<{ date: string }> }
 ) {
   try {
+    await ensureDatabase();
     const { date } = await params;
 
     if (!isValidDateString(date)) {
@@ -61,6 +62,7 @@ export async function PUT(
   { params }: { params: Promise<{ date: string }> }
 ) {
   try {
+    await ensureDatabase();
     const { date } = await params;
 
     if (!isValidDateString(date)) {
@@ -172,6 +174,7 @@ export async function DELETE(
   { params }: { params: Promise<{ date: string }> }
 ) {
   try {
+    await ensureDatabase();
     const { date } = await params;
 
     if (!isValidDateString(date)) {
