@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { signOut, useSession } from 'next-auth/react'
 import {
   Settings, Users, Bell, LogOut, Save, Loader2,
   Download, Trash2, AlertTriangle, Sun, Calendar,
@@ -69,6 +70,7 @@ function setReminderTimeToStorage(val: string) {
 
 export function SettingsScreen() {
   const { employee, fetchProfile, showToast, setCurrentScreen, setEmployee, setAttendanceRecords } = useAppStore()
+  const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
   const [name, setName] = useState(employee?.name ?? '')
   const [monthlySalary, setMonthlySalary] = useState(String(employee?.monthlySalary ?? ''))
@@ -119,10 +121,11 @@ export function SettingsScreen() {
     setSaving(false)
   }
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setEmployee(null)
+    setAttendanceRecords([])
     setCurrentScreen('onboarding')
-    showToast('Signed out', 'info')
+    await signOut({ callbackUrl: '/' })
   }
 
   const handleExportAllData = async () => {
@@ -235,6 +238,9 @@ export function SettingsScreen() {
   }
 
   const initials = getInitials(employee?.name ?? '')
+  const accountName = session?.user?.name ?? employee?.name ?? 'User'
+  const accountEmail = session?.user?.email
+  const accountImage = session?.user?.image
 
   return (
     <div className="screen-container screen-container-medium">
@@ -244,11 +250,21 @@ export function SettingsScreen() {
       {/* Profile Avatar + Info Card */}
       <div className="glass-card rounded-2xl p-6 mb-5 animate-card-in delay-100">
         <div className="flex items-center gap-4 mb-5">
-          <div className="w-16 h-16 rounded-full gradient-primary flex items-center justify-center flex-shrink-0 shadow-lg">
-            <span className="text-xl font-bold text-white">{initials}</span>
-          </div>
+          {accountImage ? (
+            <img
+              src={accountImage}
+              alt={`${accountName} avatar`}
+              referrerPolicy="no-referrer"
+              className="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-lg"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full gradient-primary flex items-center justify-center flex-shrink-0 shadow-lg">
+              <span className="text-xl font-bold text-white">{initials}</span>
+            </div>
+          )}
           <div className="min-w-0">
             <p className="text-lg font-semibold text-foreground truncate">{employee?.name ?? 'User'}</p>
+            {accountEmail && <p className="text-xs text-muted-foreground truncate">{accountEmail}</p>}
             <p className="text-xs text-muted-foreground">Since {employee?.startDate ?? '—'}</p>
             {employee?.monthlySalary && (
               <p className="text-xs text-muted-foreground mt-0.5">{formatCurrency(employee.monthlySalary)}/month</p>

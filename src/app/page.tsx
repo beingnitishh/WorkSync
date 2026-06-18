@@ -17,8 +17,17 @@ import { HolidayManagerScreen } from '@/components/screens/HolidayManagerScreen'
 import { EmptyStateScreen } from '@/components/screens/EmptyStateScreen'
 import { Toast } from '@/components/screens/Toast'
 import { BottomNav } from '@/components/screens/BottomNav'
+import { AuthGate } from '@/components/auth/AuthGate'
 
 export default function WorkSyncPage() {
+  return (
+    <AuthGate>
+      <WorkSyncApp />
+    </AuthGate>
+  )
+}
+
+function WorkSyncApp() {
   const { currentScreen, employee, setCurrentScreen, fetchProfile, setSelectedMonth, setSelectedYear, dateRangeFrom, dateRangeTo, setDateRangeFrom, setDateRangeTo } = useAppStore()
   const [initialized, setInitialized] = useState(false)
 

@@ -11,7 +11,8 @@ The original download was a compressed Linux workspace archive with unnecessary 
 1. Install Node.js 20 or newer.
 2. Extract this ZIP.
 3. Open a terminal inside the extracted folder.
-4. Run:
+4. Copy `.env.example` to `.env.local` and fill in your Google OAuth values.
+5. Run:
 
 ```bash
 npm install
@@ -20,15 +21,36 @@ npm run db:push
 npm run dev
 ```
 
-5. Open:
+6. Open:
 
 ```text
 http://localhost:3000
 ```
 
+## Google OAuth
+
+WorkSync uses NextAuth with the Google provider. Create a Google OAuth Web Client in Google Cloud Console and add these authorized redirect URIs:
+
+```text
+http://localhost:3000/api/auth/callback/google
+https://work-sync-two.vercel.app/api/auth/callback/google
+```
+
+Set these variables locally and in Vercel:
+
+```env
+NEXTAUTH_URL="https://work-sync-two.vercel.app"
+NEXTAUTH_SECRET="replace-with-a-random-secret"
+GOOGLE_CLIENT_ID="replace-with-google-client-id"
+GOOGLE_CLIENT_SECRET="replace-with-google-client-secret"
+WORKSYNC_ALLOWED_EMAILS="you@example.com"
+```
+
+`WORKSYNC_ALLOWED_EMAILS` is optional. Leave it empty to allow any verified Google account, or add a comma-separated list to restrict access.
+
 ## Database
 
-This package currently uses local SQLite:
+The Prisma schema is kept for project compatibility and generated client setup:
 
 ```env
 DATABASE_URL="file:../db/custom.db"
